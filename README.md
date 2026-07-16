@@ -1,8 +1,9 @@
 # Görev Takip Sistemi
 
+![Görev Takip Sistemi arayüzü](arayuz.png)
 
 
-![Arayüz](docs/arayuz.png)
+
 Spring Boot ile geliştirilmiş, katmanlı mimaride bir görev yönetimi uygulaması. JSON tabanlı bir REST API ve bu API'yi tüketen jQuery tabanlı hafif bir web arayüzü içerir.
 
 ## Özellikler
