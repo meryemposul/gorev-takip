@@ -6,9 +6,6 @@ import com.ornek.gorevtakip.entity.GorevDurumu;
 
 import java.util.List;
 
-/**
- * İş katmanı arayüzü. Arayüze programlama = OOP prensipleri (İlan B-ı).
- */
 public interface GorevService {
 
     List<GorevDto> tumunuGetir(GorevDurumu durum);

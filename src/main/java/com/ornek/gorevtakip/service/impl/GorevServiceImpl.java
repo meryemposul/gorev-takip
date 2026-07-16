@@ -12,10 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * İş katmanı gerçekleştirimi.
- * Constructor injection ile bağımlılıklar yönetilir (test edilebilirlik, İlan B-m).
- */
 @Service
 @Transactional
 public class GorevServiceImpl implements GorevService {
@@ -32,7 +28,6 @@ public class GorevServiceImpl implements GorevService {
         List<Gorev> gorevler = (durum == null)
                 ? gorevRepository.findAll()
                 : gorevRepository.findByDurumOrderByOlusturmaTarihiDesc(durum);
-        // Java 8+ Stream API (İlan B-b)
         return gorevler.stream().map(GorevDto::fromEntity).toList();
     }
 

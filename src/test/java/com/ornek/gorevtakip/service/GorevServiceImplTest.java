@@ -22,7 +22,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Birim testleri - JUnit 5 + Mockito (İlan B-m: Unit test, B-ı: TDD).
  */
 @ExtendWith(MockitoExtension.class)
 class GorevServiceImplTest {

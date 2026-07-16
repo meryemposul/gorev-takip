@@ -3,10 +3,6 @@ package com.ornek.gorevtakip.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Görev varlık sınıfı.
- * Hibernate / JPA ile "gorevler" tablosuna eşlenir (İlan B-ç: ORM).
- */
 @Entity
 @Table(name = "gorevler")
 public class Gorev {

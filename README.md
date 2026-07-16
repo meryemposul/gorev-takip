@@ -1,5 +1,9 @@
 # Görev Takip Sistemi
 
+
+🔗 **Canlı demo:** http://89.144.10.135:8090
+
+![Arayüz](docs/arayuz.png)
 Spring Boot ile geliştirilmiş, katmanlı mimaride bir görev yönetimi uygulaması. JSON tabanlı bir REST API ve bu API'yi tüketen jQuery tabanlı hafif bir web arayüzü içerir.
 
 ## Özellikler

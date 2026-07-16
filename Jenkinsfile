@@ -1,4 +1,3 @@
-// CI-CD boru hatti ornegi - Jenkins (Ilan B-j)
 pipeline {
     agent any
 

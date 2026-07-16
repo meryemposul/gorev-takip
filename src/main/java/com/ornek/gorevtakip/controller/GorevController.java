@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
-/**
- * Sunum katmanı - REST API (İlan B-f: REST, B-d: Spring MVC).
- */
 @RestController
 @RequestMapping("/api/gorevler")
 public class GorevController {

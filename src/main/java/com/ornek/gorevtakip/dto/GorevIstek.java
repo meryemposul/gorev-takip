@@ -3,10 +3,6 @@ package com.ornek.gorevtakip.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/**
- * İstemciden gelen oluşturma/güncelleme isteği (Request DTO).
- * Entity'yi doğrudan dışarı açmamak katmanlı mimarinin gereğidir (İlan B-g).
- */
 public class GorevIstek {
 
     @NotBlank(message = "Başlık boş olamaz")

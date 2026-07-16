@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Web katmanı testleri - MockMvc (İlan B-ğ: web testleri).
  */
 @WebMvcTest(GorevController.class)
 class GorevControllerTest {

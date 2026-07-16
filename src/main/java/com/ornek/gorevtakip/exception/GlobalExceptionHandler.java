@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Merkezi hata yönetimi (Cross-cutting concern, çok katmanlı mimari - İlan B-g).
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

@@ -5,10 +5,6 @@ import com.ornek.gorevtakip.entity.GorevDurumu;
 
 import java.time.LocalDateTime;
 
-/**
- * İstemciye dönen yanıt nesnesi (Response DTO).
- * Statik fabrika metodu = Tasarım Desenleri (İlan B-ı).
- */
 public class GorevDto {
 
     private Long id;
