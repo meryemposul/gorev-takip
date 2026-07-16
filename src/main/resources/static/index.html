@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Görev Takip Sistemi</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<style>
+  :root {
+    --murekkep: #1c2733;   /* koyu mürekkep mavisi */
+    --kagit: #f7f6f2;      /* resmi evrak kağıdı */
+    --cizgi: #d8d4ca;
+    --damga: #8a1f1f;      /* resmi damga kırmızısı */
+    --onay: #2e6b45;
+    --bekleme: #8a6d1f;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    background: var(--kagit);
+    color: var(--murekkep);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .evrak {
+    max-width: 760px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid var(--cizgi);
+    box-shadow: 0 2px 0 var(--cizgi);
+  }
+  header {
+    border-bottom: 3px double var(--murekkep);
+    padding: 1.5rem 2rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  header h1 { font-size: 1.35rem; letter-spacing: 0.04em; }
+  header .sayi {
+    font-family: "Courier New", monospace;
+    font-size: 0.8rem;
+    color: var(--damga);
+  }
+  .govde { padding: 1.5rem 2rem 2rem; }
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  input {
+    font: inherit;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--cizgi);
+    border-radius: 0;
+    background: var(--kagit);
+  }
+  input:focus { outline: 2px solid var(--murekkep); outline-offset: -1px; }
+  button {
+    font: inherit;
+    border: 1px solid var(--murekkep);
+    background: var(--murekkep);
+    color: #fff;
+    padding: 0.55rem 1.1rem;
+    cursor: pointer;
+  }
+  button:hover { background: #2e3f52; }
+  button:focus-visible { outline: 2px solid var(--damga); outline-offset: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th {
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border-bottom: 2px solid var(--murekkep);
+    padding: 0.4rem 0.5rem;
+  }
+  td { border-bottom: 1px solid var(--cizgi); padding: 0.6rem 0.5rem; vertical-align: top; }
+  td .aciklama { display: block; font-size: 0.82rem; color: #5a6470; font-style: italic; }
+  .rozet {
+    font-family: "Courier New", monospace;
+    font-size: 0.72rem;
+    border: 1px solid currentColor;
+    padding: 0.15rem 0.45rem;
+    white-space: nowrap;
+  }
+  .r-BEKLIYOR { color: var(--bekleme); }
+  .r-DEVAM_EDIYOR { color: var(--murekkep); }
+  .r-TAMAMLANDI { color: var(--onay); }
+  .islem button {
+    background: none;
+    color: var(--murekkep);
+    border: 1px solid var(--cizgi);
+    padding: 0.25rem 0.55rem;
+    font-size: 0.78rem;
+    margin: 0 0.1rem 0.2rem 0;
+  }
+  .islem button.sil { color: var(--damga); }
+  .bos { padding: 2rem; text-align: center; color: #5a6470; font-style: italic; }
+  @media (max-width: 640px) {
+    form { grid-template-columns: 1fr; }
+    header { flex-direction: column; gap: 0.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="evrak">
+  <header>
+    <h1>GÖREV TAKİP SİSTEMİ</h1>
+    <span class="sayi">Birim: Bilgi İşlem &nbsp;•&nbsp; Kayıt Defteri</span>
+  </header>
+  <div class="govde">
+    <form id="gorevForm">
+      <input id="baslik" placeholder="Görev başlığı" maxlength="100" required>
+      <input id="aciklama" placeholder="Açıklama (isteğe bağlı)" maxlength="500">
+      <button type="submit">Kaydet</button>
+    </form>
+    <table>
+      <thead>
+        <tr><th>No</th><th>Görev</th><th>Durum</th><th>İşlem</th></tr>
+      </thead>
+      <tbody id="liste"></tbody>
+    </table>
+    <div id="bosMesaj" class="bos" hidden>Kayıtlı görev bulunmuyor. İlk görevi yukarıdan ekleyin.</div>
+  </div>
+</div>
+
+<script>
+// jQuery + AJAX ile REST API tüketimi (İlan B-i: JQuery, Javascript, HTML, CSS)
+const API = '/api/gorevler';
+
+function durumEtiketi(d) {
+  return { BEKLIYOR: 'Bekliyor', DEVAM_EDIYOR: 'Devam Ediyor', TAMAMLANDI: 'Tamamlandı' }[d] || d;
+}
+
+function listele() {
+  $.getJSON(API, function (gorevler) {
+    const $liste = $('#liste').empty();
+    $('#bosMesaj').prop('hidden', gorevler.length > 0);
+    gorevler.forEach(function (g) {
+      const $tr = $('<tr>');
+      $tr.append($('<td>').text(g.id));
+      const $gorev = $('<td>').text(g.baslik);
+      if (g.aciklama) $gorev.append($('<span class="aciklama">').text(g.aciklama));
+      $tr.append($gorev);
+      $tr.append($('<td>').append(
+        $('<span>').addClass('rozet r-' + g.durum).text(durumEtiketi(g.durum))
+      ));
+      const $islem = $('<td class="islem">');
+      if (g.durum !== 'TAMAMLANDI') {
+        const sonraki = g.durum === 'BEKLIYOR' ? 'DEVAM_EDIYOR' : 'TAMAMLANDI';
+        $('<button>').text(sonraki === 'DEVAM_EDIYOR' ? 'Başlat' : 'Tamamla')
+          .on('click', function () { durumGuncelle(g.id, sonraki); })
+          .appendTo($islem);
+      }
+      $('<button class="sil">').text('Sil')
+        .on('click', function () { sil(g.id); })
+        .appendTo($islem);
+      $tr.append($islem);
+      $liste.append($tr);
+    });
+  });
+}
+
+function durumGuncelle(id, yeniDurum) {
+  $.ajax({ url: API + '/' + id + '/durum?yeniDurum=' + yeniDurum, method: 'PATCH' })
+    .done(listele);
+}
+
+function sil(id) {
+  $.ajax({ url: API + '/' + id, method: 'DELETE' }).done(listele);
+}
+
+$('#gorevForm').on('submit', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: API,
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+      baslik: $('#baslik').val().trim(),
+      aciklama: $('#aciklama').val().trim() || null
+    })
+  }).done(function () {
+    $('#baslik').val('');
+    $('#aciklama').val('');
+    listele();
+  }).fail(function (xhr) {
+    alert(xhr.responseJSON && xhr.responseJSON.mesaj ? xhr.responseJSON.mesaj : 'Kayıt başarısız.');
+  });
+});
+
+listele();
+</script>
+</body>
+</html>
