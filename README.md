@@ -2,17 +2,11 @@
 
 ![Görev Takip Sistemi arayüzü](arayuz.png)
 
-
-
 Spring Boot ile geliştirilmiş, katmanlı mimaride bir görev yönetimi uygulaması. JSON tabanlı bir REST API ve bu API'yi tüketen jQuery tabanlı hafif bir web arayüzü içerir.
 
 ## Özellikler
 
-- Görev oluşturma, listeleme, güncelleme ve silme (CRUD)
-- Durum yönetimi: Bekliyor → Devam Ediyor → Tamamlandı
-- Durum bazlı filtreleme
-- Bean Validation ile girdi doğrulama ve merkezi hata yönetimi
-- Doğru HTTP durum kodları (200 / 201 / 204 / 400 / 404)
+Görev oluşturma, listeleme, güncelleme ve silme; Bekliyor, Devam Ediyor ve Tamamlandı adımlarından oluşan durum yönetimi; durum bazlı filtreleme; Bean Validation ile girdi doğrulama; merkezi hata yönetimi ve doğru HTTP durum kodları (200, 201, 204, 400, 404).
 
 ## Teknolojiler
 
@@ -20,42 +14,16 @@ Java 17, Spring Boot 3, Spring Data JPA (Hibernate), H2 / MSSQL, Maven, JUnit 5,
 
 ## Çalıştırma
 
-JDK 17+ ve Maven 3.8+ gereklidir.
-
-```bash
-mvn spring-boot:run
-```
-
-Uygulama http://localhost:8080 adresinde açılır. Geliştirme ortamında gömülü H2 veritabanı kullanılır; `application.properties` içindeki hazır profil ile MSSQL Server'a geçiş yalnızca konfigürasyon değişikliğidir.
-
-Testler için:
-
-```bash
-mvn test
-```
+JDK 17 ve Maven 3.8 veya üzeri gereklidir. Proje kök dizininde "mvn spring-boot:run" komutu uygulamayı başlatır; uygulama yerel makinede 8080 portunda açılır. Geliştirme ortamında gömülü H2 veritabanı kullanılır. MSSQL Server'a geçiş, application.properties dosyasındaki hazır profil sayesinde yalnızca konfigürasyon değişikliğidir. Testler "mvn test" komutu ile çalıştırılır.
 
 ## REST API
 
-| Metot  | Yol                      | Açıklama                                        |
-|--------|--------------------------|-------------------------------------------------|
-| GET    | /api/gorevler            | Görevleri listeler (`?durum=` filtresi opsiyonel) |
-| GET    | /api/gorevler/{id}       | Tek görev getirir                               |
-| POST   | /api/gorevler            | Yeni görev oluşturur                            |
-| PUT    | /api/gorevler/{id}       | Görevi günceller                                |
-| PATCH  | /api/gorevler/{id}/durum | Görev durumunu değiştirir                       |
-| DELETE | /api/gorevler/{id}       | Görevi siler                                    |
-
-Örnek istek:
-
-```bash
-curl -X POST http://localhost:8080/api/gorevler \
-  -H "Content-Type: application/json" \
-  -d '{"baslik":"Rapor hazırla","aciklama":"Aylık faaliyet raporu"}'
-```
+Tüm uç noktalar /api/gorevler altında toplanır. GET ile görevler listelenir (durum parametresi ile filtrelenebilir) veya id ile tek görev getirilir. POST yeni görev oluşturur, PUT mevcut görevi günceller, PATCH ile görevin durumu değiştirilir, DELETE görevi siler.
 
 ## Mimari
-Katmanlar arası bağımlılıklar constructor injection ile yönetilir; entity'ler dış dünyaya DTO'lar üzerinden açılır. Servis katmanı Mockito ile birim testlerine, web katmanı MockMvc ile katman testlerine sahiptir.
+
+Proje dört ana katmandan oluşur: controller paketi sunum katmanını (REST), service paketi arayüz ve gerçekleştirimden oluşan iş katmanını, repository paketi Spring Data JPA tabanlı veri erişim katmanını, entity paketi ise JPA varlıklarını barındırır. Entity'ler dış dünyaya dto paketindeki veri taşıma nesneleri üzerinden açılır; hatalar exception paketindeki merkezi hata yöneticisinde toplanır. Katmanlar arası bağımlılıklar constructor injection ile yönetilir. Servis katmanı Mockito ile birim testlerine, web katmanı MockMvc ile katman testlerine sahiptir.
 
 ## CI/CD
 
-Depodaki `Jenkinsfile`, derleme → test → paketleme aşamalarından oluşan örnek bir Jenkins boru hattı tanımlar.
+Depodaki Jenkinsfile, derleme, test ve paketleme aşamalarından oluşan örnek bir Jenkins boru hattı tanımlar.
